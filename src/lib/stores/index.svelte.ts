@@ -9,7 +9,7 @@ export enum Screens {
   finishedAll = 'finishedAll'
 }
 
-export const washing_time = moment.duration(40, 'seconds');
+export const washing_time = moment.duration(40, 'minutes');
 export const drying_time = moment.duration(50, 'minutes');
 
 const START_WASHING_TIME_KEY = 'start-washing-time';
@@ -39,12 +39,34 @@ export class Store {
 
       this.startDryingTime = dryTime;
       this.startWashingTime = moment(local.wash);
+
+      const targetTime = moment(
+        drying_time.asMilliseconds() - (moment().valueOf() - dryTime.valueOf())
+      );
+
+      this.scheduleNotification({
+        title: 'Finished Washing',
+        body: 'Go back to continue to drying',
+        time: targetTime
+      });
     } else if (local.wash) {
       const washTime = moment(local.wash);
 
       if (finishedWashing) {
         this.screen = Screens.finishedWashing;
       } else {
+        const targetTime = moment().add(
+          washing_time.asMilliseconds() - (moment().valueOf() - washTime.valueOf())
+        );
+
+        console.log('target', targetTime);
+
+        this.scheduleNotification({
+          title: 'Your Laundry is Completed',
+          body: 'Drying is completed, time to take out your clothes!',
+          time: targetTime
+        });
+
         this.screen = Screens.washing;
       }
 
