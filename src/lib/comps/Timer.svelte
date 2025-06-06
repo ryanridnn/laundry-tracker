@@ -8,11 +8,12 @@
 
 	const pad = (num: number) => String(num).padStart(2, '0');
 
+	console.log(time);
 	onMount(() => {
 		if (element) {
-			let curr_time = 0;
+			let init_time = time.valueOf();
 			let interval = setInterval(() => {
-				curr_time += 500;
+				let curr_time = Date.now() - init_time;
 
 				const minutes = Math.floor(curr_time / 60000);
 
